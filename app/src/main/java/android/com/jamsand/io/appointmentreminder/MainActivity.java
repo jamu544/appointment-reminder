@@ -1,5 +1,6 @@
 package android.com.jamsand.io.appointmentreminder;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -51,6 +52,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return appointment.monthDate+" "+appointment.dayDate+", "+appointment.yearDate;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1){
+            if (requestCode == RESULT_OK) {
+                appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
+
+
+
+                appointmentArrayList.add( new Appointment(data.getStringExtra("name"),data.getStringExtra("type"),
+                        data.getStringExtra("monthOfYear"), data.getIntExtra("dayOfMonth",0),data.getIntExtra("year",0),
+                        data.getIntExtra("hour",11),data.getIntExtra("minute",11),data.getStringExtra("AMorPM")
+                        ));
+
+                populateTable(appointmentArrayList.size()-1);
+            }
+        }
     }
 
     private void populateTable(int arrayListCounter) {
