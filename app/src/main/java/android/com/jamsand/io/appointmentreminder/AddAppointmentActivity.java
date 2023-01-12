@@ -1,5 +1,6 @@
 package android.com.jamsand.io.appointmentreminder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -37,6 +38,50 @@ public class AddAppointmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_appointment);
         setCurrentDateAndTime();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("Month", month);
+        outState.putInt("Day", day);
+        outState.putInt("Year", year);
+        outState.putInt("Hour", hour);
+        outState.putInt("Minute", minute);
+    }
+
+    void UpdateDisplayDateOrTime(int DateOrTime){
+        switch (DateOrTime){
+            case 0: //Month Day, Year
+                txtDate.setText(new StringBuilder()
+                .append(DisplayTheMonthInCharacters(month)).append(" ")
+                .append(day).append(", ")
+                .append(year)
+                );
+            case  1:
+                //set current time int textView
+                txtTime.setText(new StringBuilder().append(pad(hour))
+                        .append(":").append(pad(minute)));
+                txtTime.setText(new StringBuilder()
+                        .append(FormatTheHour(hour)).append(":")
+                        .append(FormatTheHour(minute)).append(" ")
+                        .append(AMorPM(hour)));
+
+
+        }
+    }
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        month = savedInstanceState.getInt("Month");
+        day = savedInstanceState.getInt("Day");
+        year = savedInstanceState.getInt("Year");
+        hour = savedInstanceState.getInt("Hour");
+        minute = savedInstanceState.getInt("Minute");
+
+        UpdateDisplayDateOrTime(0);
+        UpdateDisplayDateOrTime(1);
+
     }
 
     private void setCurrentDateAndTime() {
@@ -111,7 +156,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
             intent.putExtra("type",spinnerAppointmentType.getSelectedItem().toString());
 
-            intent.putExtra("monthOfYear", displayTheMonthInCharacters(month));
+            intent.putExtra("monthOfYear", DisplayTheMonthInCharacters(month));
             intent.putExtra("dayOfMonth",day);
             intent.putExtra("year",year);
 
@@ -126,7 +171,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
             Toast.makeText(this,"Please enter an Appointment Name",Toast.LENGTH_SHORT).show();
         }
     }
-    private String displayTheMonthInCharacters(int passedMonth){
+    private String DisplayTheMonthInCharacters(int passedMonth){
         switch (passedMonth){
             case 0:
                 return "Jan";
@@ -180,5 +225,18 @@ public class AddAppointmentActivity extends AppCompatActivity {
     }
 
     public void edittxtDate(View view) {
+    }
+    // meant to correct the display minute for 0-9 "00 vs 0"
+    private String FormatTheMinute(int passedMinute){
+        String forwardTime = Integer.toString(passedMinute);
+        if (passedMinute < 10) {
+            forwardTime = "0"+forwardTime;
+        }
+        return forwardTime;
+    }
+    //Converts the 24 hours PassedHour to a 12 Hour time.
+    private int FormatTheHour(int passedHour){
+        if (passedHour > 12){ passedHour -= 12; }
+        return passedHour;
     }
 }

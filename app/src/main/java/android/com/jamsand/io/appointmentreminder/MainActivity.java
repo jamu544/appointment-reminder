@@ -1,5 +1,6 @@
 package android.com.jamsand.io.appointmentreminder;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +24,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        createSomeTestAppointmentsToStartWith();
+        if (savedInstanceState == null) {
+            createSomeTestAppointmentsToStartWith();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outSate) {
+        super.onSaveInstanceState(outSate);
+        outSate.putParcelableArrayList("Appointment_Array_List", appointmentArrayList);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        appointmentArrayList = savedInstanceState.getParcelableArrayList("Appointment_Array_List");
+
+        for (int i = 0;i < appointmentArrayList.size();i++){
+            populateTable(i);
+        }
     }
 
     private void createSomeTestAppointmentsToStartWith() {
