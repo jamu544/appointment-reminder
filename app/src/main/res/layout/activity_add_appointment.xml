@@ -14,11 +14,5 @@
         android:layout_height="match_parent"
         class="android.com.jamsand.io.appointmentreminder.fragments.AddApointmentFragment"
         >
-
     </fragment>
-
-
-
-
-
 </LinearLayout>

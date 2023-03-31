@@ -4,8 +4,9 @@ package android.com.jamsand.io.appointmentreminder.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.com.jamsand.io.appointmentreminder.Appointment;
 import android.com.jamsand.io.appointmentreminder.R;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,8 @@ import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-
-import static android.app.Activity.RESULT_OK;
 
 public class AddApointmentFragment extends Fragment {
     TextView txtDate;
@@ -40,13 +40,38 @@ public class AddApointmentFragment extends Fragment {
     static final int DATE_DIALOG_ID = 999;
     static final int TIME_DIALOG_ID = 998;
 
+    private AddApointmentFragment.OnItemSelectedlistener listener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_add_appointment, container, false);
+        Button cancelButton = (Button) view.findViewById(R.id.btnCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
 
+        Button addButton = (Button) view.findViewById(R.id.btnAddTask);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editAppointmentName = getActivity().findViewById(R.id.editTaskName);
+                Spinner spinnerAppointmentType = getActivity().findViewById(R.id.spnTaskType);
+                if (!(editAppointmentName.getText().toString().isEmpty())) {
+                   Appointment app = new Appointment(editAppointmentName.getText().toString(),spinnerAppointmentType.getSelectedItem().toString(),
+                           displayTheMonthInCharacters(month),day,year,FormatTheHour(hour),minute, AMorPM(hour));
 
+                    listener.onAddAppointmentSelected(app);
+
+                } else {
+                    Toast.makeText(getActivity(), "Please enter an Appointment Name", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return view;
     }
 
@@ -59,53 +84,91 @@ public class AddApointmentFragment extends Fragment {
         }
         setCurrentDateAndTime();
 
+      TextView txtTime = getActivity().findViewById(R.id.txtvTime);
+        txtTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePicker();
+            }
+        });
+
+        TextView date = getActivity().findViewById(R.id.txttvDate);
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePicker();
+            }
+        });
+
     }
+    private void showTimePicker() {
+        TimePickerFragment time = new TimePickerFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("hour", hour);
+        args.putInt("minute", month);
+        time.setArguments(args);
+
+        time.setCallBack(onTime);
+        time.show(getFragmentManager(), "Time Picker");
+    }
+    public void showDatePicker(){
+        DatePickerFragment date = new DatePickerFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("year",year);
+        args.putInt("month",month);
+        args.putInt("day",day);
+
+        date.setArguments(args);
+
+        date.setCallBack(ondate);
+
+        date.show(getFragmentManager(), "Date Picker");
 
 
-//    @Override
-//    protected void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putInt("Month", month);
-//        outState.putInt("Day", day);
-//        outState.putInt("Year", year);
-//        outState.putInt("Hour", hour);
-//        outState.putInt("Minute", minute);
-//    }
+    }
+    DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
 
-    void UpdateDisplayDateOrTime(int DateOrTime) {
-        switch (DateOrTime) {
-            case 0: //Month Day, Year
-                txtDate.setText(new StringBuilder()
-                        .append(DisplayTheMonthInCharacters(month)).append(" ")
-                        .append(day).append(", ")
-                        .append(year)
-                );
-            case 1:
-                //set current time int textView
-                txtTime.setText(new StringBuilder().append(pad(hour))
-                        .append(":").append(pad(minute)));
-                txtTime.setText(new StringBuilder()
-                        .append(FormatTheHour(hour)).append(":")
-                        .append(FormatTheHour(minute)).append(" ")
-                        .append(AMorPM(hour)));
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
+                              int selectedDay) {
 
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedDay;
 
+            txtDate.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year)
+                    .append(" "));
+        }
+    };
+    TimePickerDialog.OnTimeSetListener onTime = new TimePickerDialog.OnTimeSetListener() {
+
+        public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+            hour = selectedHour;
+            minute = selectedMinute;
+
+            // set current time into textview
+            txtTime.setText(new StringBuilder().append(pad(hour))
+                    .append(":").append(pad(minute)));
+        }
+    };
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnItemSelectedlistener){
+            listener = (AddApointmentFragment.OnItemSelectedlistener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+            +" must implement MyllistFrgment.OnItemSelelected");
         }
     }
 
-//    @Override
-//    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        month = savedInstanceState.getInt("Month");
-//        day = savedInstanceState.getInt("Day");
-//        year = savedInstanceState.getInt("Year");
-//        hour = savedInstanceState.getInt("Hour");
-//        minute = savedInstanceState.getInt("Minute");
-//
-//        UpdateDisplayDateOrTime(0);
-//        UpdateDisplayDateOrTime(1);
-//
-//    }
+    public interface OnItemSelectedlistener {
+        public void onAddAppointmentSelected(Appointment appt);
+    }
+
 
     private void setCurrentDateAndTime() {
         txtDate = getActivity().findViewById(R.id.txttvDate);
@@ -151,50 +214,7 @@ public class AddApointmentFragment extends Fragment {
         }
     };
 
-//    @Override
-//    protected Dialog onCreateDialog(int id) {
-//        switch (id){
-//            case DATE_DIALOG_ID:
-//                return new DatePickerDialog(this,datePickerListener,year, month, day);
-//            case TIME_DIALOG_ID:
-//                return new TimePickerDialog(this,timePickerListener, hour, minute, false);
-//        }
-//        return null;
-//    }
-
-    public void edittextDate(View view) {
-    }
-
-    public void btnCancel(View view) {
-        getActivity().finish();
-    }
-
-    public void btnAddAppointment(View view) {
-        EditText editAppointmentName = getActivity().findViewById(R.id.editTaskName);
-        Spinner spinnerAppointmentType = getActivity().findViewById(R.id.spinnerTaskType);
-        if (!(editAppointmentName.getText().toString().isEmpty())) {
-            Intent intent = new Intent();
-
-            intent.putExtra("name", editAppointmentName.getText().toString());
-
-            intent.putExtra("type", spinnerAppointmentType.getSelectedItem().toString());
-
-            intent.putExtra("monthOfYear", DisplayTheMonthInCharacters(month));
-            intent.putExtra("dayOfMonth", day);
-            intent.putExtra("year", year);
-
-            intent.putExtra("hour", formatHour(hour));
-            intent.putExtra("minute", minute);
-            intent.putExtra("AMorPM", AMorPM(hour));
-
-//            getActivity().setResult(RESULT_OK, intent);
-//            getActivity().finish();
-        } else {
-            Toast.makeText(getActivity(), "Please enter an Appointment Name", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String DisplayTheMonthInCharacters(int passedMonth) {
+       private String displayTheMonthInCharacters(int passedMonth) {
         switch (passedMonth) {
             case 0:
                 return "Jan";
@@ -247,12 +267,6 @@ public class AddApointmentFragment extends Fragment {
             return "0" + String.valueOf(c);
     }
 
-    public void edittxtTime(View view) {
-    }
-
-    public void edittxtDate(View view) {
-    }
-
     // meant to correct the display minute for 0-9 "00 vs 0"
     private String FormatTheMinute(int passedMinute) {
         String forwardTime = Integer.toString(passedMinute);
@@ -268,5 +282,52 @@ public class AddApointmentFragment extends Fragment {
             passedHour -= 12;
         }
         return passedHour;
+    }
+
+    public static class DatePickerFragment extends DialogFragment {
+        DatePickerDialog.OnDateSetListener ondateSet;
+        private int year, month, day;
+
+        public DatePickerFragment() {}
+
+        public void setCallBack(DatePickerDialog.OnDateSetListener ondate) {
+            ondateSet = ondate;
+        }
+
+        @Override
+        public void setArguments(Bundle args) {
+            super.setArguments(args);
+            year = args.getInt("year");
+            month = args.getInt("month");
+            day = args.getInt("day");
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+        }
+    }
+
+    public static class TimePickerFragment extends DialogFragment {
+        TimePickerDialog.OnTimeSetListener onTimeSet;
+        private int hour, minute;
+
+        public TimePickerFragment() {}
+
+        public void setCallBack(TimePickerDialog.OnTimeSetListener ontime) {
+            onTimeSet = ontime;
+        }
+
+        @Override
+        public void setArguments(Bundle args) {
+            super.setArguments(args);
+            hour = args.getInt("hour");
+            minute = args.getInt("minute");
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new TimePickerDialog(getActivity(), onTimeSet, hour, minute, false);
+        }
     }
 }

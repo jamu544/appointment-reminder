@@ -1,6 +1,5 @@
 package android.com.jamsand.io.appointmentreminder.fragments;
 
-import android.app.Fragment;
 import android.com.jamsand.io.appointmentreminder.AddAppointmentActivity;
 import android.com.jamsand.io.appointmentreminder.Appointment;
 import android.com.jamsand.io.appointmentreminder.R;
@@ -22,10 +21,11 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class MainFragment extends Fragment {
 
-    public ArrayList<Appointment> appointmentArrayList = new ArrayList<Appointment>();
+    public ArrayList<Appointment> appointmentArrayList = new ArrayList<>();
 
     private OnItemSelectedListener listener;
 
@@ -72,31 +72,19 @@ public class MainFragment extends Fragment {
     public interface OnItemSelectedListener {
         public void onButtonSelected();
     }
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outSate) {
-//        super.onSaveInstanceState(outSate);
-//        outSate.putParcelableArrayList("Appointment_Array_List", appointmentArrayList);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        appointmentArrayList = savedInstanceState.getParcelableArrayList("Appointment_Array_List");
-//
-//        for (int i = 0;i < appointmentArrayList.size();i++){
-//            populateTable(i);
-//        }
-//    }
+    public void updateAppointmentListAndDisplay( Appointment appt){
+        appointmentArrayList.add(appt);
+        populateTable(appointmentArrayList.size()-1);
+    }
 
     private void createSomeTestAppointmentsToStartWith() {
         appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
-        appointmentArrayList.add(new Appointment("Doctors Visit", "Health",  "October", 9, 2016,  9,  00,  "AM"));
+        appointmentArrayList.add(new Appointment("Hair Cut appointment", "Personal",  "Oct", 10, 2016,  9,  300,  "AM"));
+        appointmentArrayList.add(new Appointment("Meeting with Accountant","Personal","Oct", 11, 2016,11,00,"AM"));
+        appointmentArrayList.add(new Appointment("Boss/HR Meeting","Work","Oct", 12, 2016,2,30,"PM"));
+        appointmentArrayList.add(new Appointment("Teacher Conference","School","Nov", 1, 2016,9,30,"AM"));
+        appointmentArrayList.add(new Appointment("Dentist For Son","Health","Nov", 1, 2016,9,30,"AM"));
+        appointmentArrayList.add(new Appointment("Dinner With Friends","Other","Nov", 1, 2016,9,30,"AM"));
 
         for (int i = 0; i < appointmentArrayList.size(); i++) {
             populateTable(i);
@@ -159,7 +147,4 @@ public class MainFragment extends Fragment {
     }
 
 
-    public void AddAppointmentBtn(View view) {
-        startActivityForResult(new Intent(getActivity(), AddAppointmentActivity.class), 1);
-    }
 }
