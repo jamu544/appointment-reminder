@@ -48,7 +48,7 @@ public class AddApointmentFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().finish();
+                listener.onCancel();
             }
         });
 
@@ -111,6 +111,7 @@ public class AddApointmentFragment extends Fragment {
 
     public interface OnItemSelectedlistener {
         public void onAddAppointmentSelected(Appointment appt);
+        public void onCancel();
     }
 
     private void setCurrentDateAndTime() {

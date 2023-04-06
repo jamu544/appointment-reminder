@@ -1,10 +1,8 @@
 package android.com.jamsand.io.appointmentreminder.fragments;
 
-import android.com.jamsand.io.appointmentreminder.AddAppointmentActivity;
 import android.com.jamsand.io.appointmentreminder.Appointment;
 import android.com.jamsand.io.appointmentreminder.R;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -60,11 +57,12 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-
-        }
-        createSomeTestAppointmentsToStartWith();
+        populateAppoints();
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//
+//        }
+//        createSomeTestAppointmentsToStartWith();
     }
 
 
@@ -73,7 +71,12 @@ public class MainFragment extends Fragment {
     }
     public void updateAppointmentListAndDisplay( Appointment appt){
         appointmentArrayList.add(appt);
-        populateTable(appointmentArrayList.size()-1);
+      //  populateTable(appointmentArrayList.size()-1);
+    }
+    public void populateAppoints(){
+        for (int i = 0; i < appointmentArrayList.size(); i++) {
+            populateTable(i);
+        }
     }
 
     private void createSomeTestAppointmentsToStartWith() {
