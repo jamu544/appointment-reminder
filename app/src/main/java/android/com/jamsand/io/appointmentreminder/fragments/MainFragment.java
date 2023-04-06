@@ -65,7 +65,6 @@ public class MainFragment extends Fragment {
 
         }
         createSomeTestAppointmentsToStartWith();
-
     }
 
 
@@ -92,17 +91,16 @@ public class MainFragment extends Fragment {
     }
 
     private String setToDateAndTime(Appointment appointment){
-        long currentDatAndTime = System.currentTimeMillis();
-        SimpleDateFormat formDate = new SimpleDateFormat("MMM d, yyyy");
+        long currentDatAndTime = System.currentTimeMillis(); // Todays Date
+        SimpleDateFormat formDate = new SimpleDateFormat("MMM d, yyyy"); // Date Format
 
-        String todaysDate = formDate.format(currentDatAndTime);
-        String passDate = appointment.monthDate+" "+ appointment.dayDate+", "+appointment.yearDate;
+        String todaysDate = formDate.format(currentDatAndTime); // Today's date formated
+        String passDate = appointment.monthDate+" "+ appointment.dayDate+", "+appointment.yearDate; // Tasks date formatted the same way
 
-        if(Objects.equals(todaysDate, passDate)){
+        if(Objects.equals(todaysDate, passDate)){ // compare today's date and passed date, return time if date match
             return appointment.hourTime+":"+appointment.dayDate+" "+appointment.AMorPMTime;
         }
-
-        return appointment.monthDate+" "+appointment.dayDate+", "+appointment.yearDate;
+        return appointment.monthDate+" "+appointment.dayDate+", "+appointment.yearDate; // otherwise, return the date
     }
 
 

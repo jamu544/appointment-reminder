@@ -37,16 +37,13 @@ public class AddApointmentFragment extends Fragment {
     private int hour;
     private int minute;
 
-    static final int DATE_DIALOG_ID = 999;
-    static final int TIME_DIALOG_ID = 998;
-
     private AddApointmentFragment.OnItemSelectedlistener listener;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_add_appointment, container, false);
+
         Button cancelButton = (Button) view.findViewById(R.id.btnCancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +70,16 @@ public class AddApointmentFragment extends Fragment {
             }
         });
         return view;
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof AddApointmentFragment.OnItemSelectedlistener) {
+            listener = (AddApointmentFragment.OnItemSelectedlistener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implemenet MyListFragment.OnItemSelectedListener");
+        }
     }
 
     @Override
@@ -101,74 +108,10 @@ public class AddApointmentFragment extends Fragment {
         });
 
     }
-    private void showTimePicker() {
-        TimePickerFragment time = new TimePickerFragment();
-
-        Bundle args = new Bundle();
-        args.putInt("hour", hour);
-        args.putInt("minute", month);
-        time.setArguments(args);
-
-        time.setCallBack(onTime);
-        time.show(getFragmentManager(), "Time Picker");
-    }
-    public void showDatePicker(){
-        DatePickerFragment date = new DatePickerFragment();
-
-        Bundle args = new Bundle();
-        args.putInt("year",year);
-        args.putInt("month",month);
-        args.putInt("day",day);
-
-        date.setArguments(args);
-
-        date.setCallBack(ondate);
-
-        date.show(getFragmentManager(), "Date Picker");
-
-
-    }
-    DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
-
-        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
-                              int selectedDay) {
-
-            year = selectedYear;
-            month = selectedMonth;
-            day = selectedDay;
-
-            txtDate.setText(new StringBuilder().append(month + 1)
-                    .append("-").append(day).append("-").append(year)
-                    .append(" "));
-        }
-    };
-    TimePickerDialog.OnTimeSetListener onTime = new TimePickerDialog.OnTimeSetListener() {
-
-        public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-            hour = selectedHour;
-            minute = selectedMinute;
-
-            // set current time into textview
-            txtTime.setText(new StringBuilder().append(pad(hour))
-                    .append(":").append(pad(minute)));
-        }
-    };
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnItemSelectedlistener){
-            listener = (AddApointmentFragment.OnItemSelectedlistener) context;
-        } else {
-            throw new ClassCastException(context.toString()
-            +" must implement MyllistFrgment.OnItemSelelected");
-        }
-    }
 
     public interface OnItemSelectedlistener {
         public void onAddAppointmentSelected(Appointment appt);
     }
-
 
     private void setCurrentDateAndTime() {
         txtDate = getActivity().findViewById(R.id.txttvDate);
@@ -188,11 +131,26 @@ public class AddApointmentFragment extends Fragment {
                 .append(month + 1).append("-").append(day).append("-")
                 .append(year).append(" "));
     }
+    public void showDatePicker(){
+        DatePickerFragment date = new DatePickerFragment();
 
-    private DatePickerDialog.OnDateSetListener datePickerListener
-            = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+        Bundle args = new Bundle();
+        args.putInt("year",year);
+        args.putInt("month",month);
+        args.putInt("day",day);
+
+        date.setArguments(args);
+
+        date.setCallBack(ondate);
+
+        date.show(getFragmentManager(), "Date Picker");
+
+    }
+    DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
+
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
+                              int selectedDay) {
+
             year = selectedYear;
             month = selectedMonth;
             day = selectedDay;
@@ -202,19 +160,31 @@ public class AddApointmentFragment extends Fragment {
                     .append(" "));
         }
     };
+    private void showTimePicker() {
+        TimePickerFragment time = new TimePickerFragment();
 
-    private TimePickerDialog.OnTimeSetListener timePickerListener
-            = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+        Bundle args = new Bundle();
+        args.putInt("hour", hour);
+        args.putInt("minute", month);
+        time.setArguments(args);
+
+        time.setCallBack(onTime);
+        time.show(getFragmentManager(), "Time Picker");
+    }
+
+
+    TimePickerDialog.OnTimeSetListener onTime = new TimePickerDialog.OnTimeSetListener() {
+
+        public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
             hour = selectedHour;
             minute = selectedMinute;
 
-            txtTime.setText(new StringBuilder().append(hour).append(":").append(minute));
+            // set current time into textview
+            txtTime.setText(new StringBuilder().append(pad(hour))
+                    .append(":").append(pad(minute)));
         }
     };
-
-       private String displayTheMonthInCharacters(int passedMonth) {
+    private String displayTheMonthInCharacters(int passedMonth) {
         switch (passedMonth) {
             case 0:
                 return "Jan";
@@ -243,7 +213,6 @@ public class AddApointmentFragment extends Fragment {
         }
         return "";
     }
-
     private int formatHour(int passedHour) {
         if (passedHour > 12) {
             return passedHour -= 12;
@@ -283,7 +252,6 @@ public class AddApointmentFragment extends Fragment {
         }
         return passedHour;
     }
-
     public static class DatePickerFragment extends DialogFragment {
         DatePickerDialog.OnDateSetListener ondateSet;
         private int year, month, day;
@@ -307,7 +275,6 @@ public class AddApointmentFragment extends Fragment {
             return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
         }
     }
-
     public static class TimePickerFragment extends DialogFragment {
         TimePickerDialog.OnTimeSetListener onTimeSet;
         private int hour, minute;
@@ -330,4 +297,5 @@ public class AddApointmentFragment extends Fragment {
             return new TimePickerDialog(getActivity(), onTimeSet, hour, minute, false);
         }
     }
+
 }

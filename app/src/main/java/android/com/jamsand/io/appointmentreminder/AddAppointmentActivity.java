@@ -21,23 +21,17 @@ import java.util.Calendar;
 
 public class AddAppointmentActivity extends AppCompatActivity implements AddApointmentFragment.OnItemSelectedlistener {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_appointment);
     }
-
-
     @Override
     public void onAddAppointmentSelected(Appointment appt) {
         Intent intent = new Intent();
 
         intent.putExtra("name", appt.name);
-
         intent.putExtra("type", appt.type);
-
         intent.putExtra("monthOfYear", appt.monthDate);
         intent.putExtra("dayOfMonth", appt.dayDate);
         intent.putExtra("year", appt.yearDate);
@@ -46,7 +40,7 @@ public class AddAppointmentActivity extends AppCompatActivity implements AddApoi
         intent.putExtra("minute", appt.minuteTime);
         intent.putExtra("AMorPM", appt.AMorPMTime);
 
-           setResult(RESULT_OK, intent);
-           finish();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
