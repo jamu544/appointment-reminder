@@ -41,33 +41,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnIt
 
     @Override
     public void onButtonSelected() {
-   //     startActivityForResult(new Intent(this,AddAppointmentActivity.class),1);
+
         FragmentManager   fragmentManager = getSupportFragmentManager();
         FragmentTransaction  ft = fragmentManager.beginTransaction();
         ft.replace(R.id.myContainer,new AddApointmentFragment());
         ft.commit();
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1) {
-//            if (requestCode == RESULT_OK) {
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                MainFragment myFragment = (MainFragment) fragmentManager.findFragmentById(R.id.mainFragment);
-//
-//                Appointment myAppointment = new Appointment(
-//                        data.getStringExtra("name"),data.getStringExtra("type"),
-//                        data.getStringExtra("monthOfYear"), data.getIntExtra("dayOfMonth",0),data.getIntExtra("year",0),
-//                        data.getIntExtra("hour",11),data.getIntExtra("minute",11),data.getStringExtra("AMorPM"));
-//                myFragment.updateAppointmentListAndDisplay(myAppointment);
-//
-//            }
-//        }
-//    }
-
     @Override
     public void onAddAppointmentSelected(Appointment appt) {
+
         FragmentManager   fragmentManager = getSupportFragmentManager();
         FragmentTransaction  ft = fragmentManager.beginTransaction();
         myFragment.updateAppointmentListAndDisplay(appt);
@@ -77,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnIt
 
     @Override
     public void onCancel() {
+
         FragmentManager   fragmentManager = getSupportFragmentManager();
         FragmentTransaction  ft = fragmentManager.beginTransaction();
         ft.replace(R.id.myContainer,myFragment);

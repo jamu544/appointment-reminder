@@ -58,11 +58,6 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         populateAppoints();
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
-//
-//        }
-//        createSomeTestAppointmentsToStartWith();
     }
 
 
@@ -71,7 +66,7 @@ public class MainFragment extends Fragment {
     }
     public void updateAppointmentListAndDisplay( Appointment appt){
         appointmentArrayList.add(appt);
-      //  populateTable(appointmentArrayList.size()-1);
+
     }
     public void populateAppoints(){
         for (int i = 0; i < appointmentArrayList.size(); i++) {
